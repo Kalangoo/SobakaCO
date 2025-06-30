@@ -1,0 +1,66 @@
+/* General App Layout */
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.App-header button {
+  margin-left: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+/* Modal Styling */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-content input, .modal-content select, .modal-content textarea {
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.error {
+  color: red;
+}
+
+/* Pet Detail in InfoWindow */
+.pet-detail {
+  font-family: Arial, sans-serif;
+  padding: 10px;
+}
+.pet-detail img {
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
