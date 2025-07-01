@@ -1,99 +1,66 @@
-import React, { useState, useRef } from 'react';
-import { Autocomplete } from '@react-google-maps/api';
+import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, auth } from '../firebaseConfig';
+// V6 SYNTAX: 'Map' is a default import
+import Map, { Marker } from 'react-map-gl';
+import GeocoderControl from './GeocoderControl';
 
 function ReportForm({ onClose }) {
   const [formData, setFormData] = useState({
-    status: 'Lost', // 'Lost' or 'Found'
-    name: '',
-    breed: '',
-    features: '',
-    hasInjuries: 'No',
-    lastSeenTime: '',
+    status: 'Lost', name: '', breed: '', features: '', hasInjuries: 'No', lastSeenTime: '',
   });
-  const [location, setLocation] = useState(null);
   const [image, setImage] = useState(null);
-  const autocompleteRef = useRef(null);
+  const [location, setLocation] = useState(null);
+  const [viewport, setViewport] = useState({
+    longitude: -98.5795, latitude: 39.8283, zoom: 3,
+  });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageChange = (e) => {
-    if (e.target.files[0]) {
-      setImage(e.target.files[0]);
+  const handleChange = (e) => { /* ... same as before ... */ };
+  const handleImageChange = (e) => { /* ... same as before ... */ };
+  
+  const handleGeocoderResult = (result) => {
+    if (result) {
+      const [lng, lat] = result.center;
+      setLocation({ address: result.place_name, lat: lat, lng: lng });
+      setViewport({ ...viewport, longitude: lng, latitude: lat, zoom: 14 });
+    } else {
+      setLocation(null);
     }
   };
 
-  const handlePlaceChanged = () => {
-    const place = autocompleteRef.current.getPlace();
-    if (place.geometry) {
-      setLocation({
-        address: place.formatted_address,
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
-      });
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!location || !image) {
-      alert('Please fill in the location and upload an image.');
-      return;
-    }
-
-    try {
-      // 1. Upload image to Firebase Storage
-      const imageRef = ref(storage, `petImages/${image.name + Date.now()}`);
-      const snapshot = await uploadBytes(imageRef, image);
-      const imageUrl = await getDownloadURL(snapshot.ref);
-
-      // 2. Add report to Firestore
-      await addDoc(collection(db, 'petReports'), {
-        ...formData,
-        location,
-        imageUrl,
-        lastSeenTime: new Date(formData.lastSeenTime),
-        createdAt: serverTimestamp(),
-        reporterId: auth.currentUser.uid,
-        reporterEmail: auth.currentUser.email,
-      });
-
-      alert('Report submitted successfully!');
-      onClose();
-    } catch (error) {
-      console.error("Error submitting report: ", error);
-      alert('Failed to submit report.');
-    }
-  };
-
+  const handleSubmit = async (e) => { /* ... same as before ... */ };
+  
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
         <h2>Report a Pet</h2>
         <form onSubmit={handleSubmit}>
-            {/* ... Form fields for name, breed, features etc. */}
-            <input type="file" onChange={handleImageChange} required />
-            <Autocomplete
-                onLoad={(ref) => (autocompleteRef.current = ref)}
-                onPlaceChanged={handlePlaceChanged}
-            >
-                <input type="text" placeholder="Last Seen Location" required />
-            </Autocomplete>
-            {/* ... other fields */}
-            <button type="submit">Submit Report</button>
-            <button type="button" onClick={onClose}>Close</button>
+          {/* ... Your other form fields ... */}
+          <input type="file" onChange={handleImageChange} required />
+          <p>Search for Last Seen Location:</p>
+          <div style={{ fontFamily: 'sans-serif', height: '250px', position: 'relative' }}>
+              <Map
+                  {...viewport}
+                  width="100%"
+                  height="100%"
+                  onViewportChange={nextViewport => setViewport(nextViewport)}
+                  mapStyle="mapbox://styles/mapbox/streets-v11"
+                  mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+              >
+                  <GeocoderControl mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN} position="top-left" onResult={handleGeocoderResult} />
+                  {location && <Marker longitude={location.lng} latitude={location.lat} />}
+              </Map>
+          </div>
+          {location && <p><strong>Selected:</strong> {location.address}</p>}
+          <br/>
+          <button type="submit">Submit Report</button>
+          <button type="button" onClick={onClose}>Close</button>
         </form>
       </div>
     </div>
   );
 }
-
+// You'll need to copy back your handleChange, handleImageChange, and handleSubmit functions
+// Or just replace the import and the <Map> component in your existing file.
 export default ReportForm;
-
-// NOTE: You would add more form fields (name, breed, features, injuries, time)
-// using the same pattern as the handleChange function. This is a simplified example.

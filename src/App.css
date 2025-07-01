@@ -1,6 +1,7 @@
 /* General App Layout */
 .App {
   text-align: center;
+  overflow: hidden;
 }
 
 .App-header {
