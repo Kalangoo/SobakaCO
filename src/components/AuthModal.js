@@ -42,16 +42,16 @@ function AuthModal({ onClose }) {
             type="password" 
             value={password}
             onChange={(e) => setPassword(e.target.value)} 
-            placeholder="Password" 
+            placeholder="Senha" 
             required 
           />
           {error && <p className="error">{error}</p>}
           <button type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
         </form>
         <button onClick={() => setIsLogin(!isLogin)}>
-          {isLogin ? 'Need an account? Sign Up' : 'Have an account? Login'}
+          {isLogin ? 'Precisa de uma Conta? Registre-se' : 'Ja possui uma Conta? Login'}
         </button>
-        <button type="button" onClick={onClose}>Close</button>
+        <button type="button" onClick={onClose}>Fechar</button>
       </div>
     </div>
   );

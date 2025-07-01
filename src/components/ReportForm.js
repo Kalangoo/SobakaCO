@@ -38,7 +38,7 @@ function ReportForm({ onClose }) {
         <form onSubmit={handleSubmit}>
           {/* ... Your other form fields ... */}
           <input type="file" onChange={handleImageChange} required />
-          <p>Search for Last Seen Location:</p>
+          <p>último local visto:</p>
           <div style={{ fontFamily: 'sans-serif', height: '250px', position: 'relative' }}>
               <Map
                   {...viewport}
@@ -54,8 +54,8 @@ function ReportForm({ onClose }) {
           </div>
           {location && <p><strong>Selected:</strong> {location.address}</p>}
           <br/>
-          <button type="submit">Submit Report</button>
-          <button type="button" onClick={onClose}>Close</button>
+          <button type="submit">Reportar</button>
+          <button type="button" onClick={onClose}>Fechar</button>
         </form>
       </div>
     </div>

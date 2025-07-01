@@ -36,17 +36,17 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Pet Finder</h1>
+        <h1>Sobaka</h1>
         <div>
           {user ? (
             <>
-              <span>Welcome, {user.email}</span>
+              <span>Bem vindo, {user.email}</span>
               <button onClick={() => auth.signOut()}>Logout</button>
             </>
           ) : (
-            <button onClick={() => setShowAuthModal(true)}>Login / Sign Up</button>
+            <button onClick={() => setShowAuthModal(true)}>Login / Registre-se</button>
           )}
-          <button onClick={handleReportButtonClick}>Report a Pet</button>
+          <button onClick={handleReportButtonClick}>Reportar Pet</button>
         </div>
       </header>
       

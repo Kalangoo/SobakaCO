@@ -17,10 +17,10 @@ function PetDetail({ report }) {
       <img src={report.imageUrl} alt={report.name || 'Pet'} width="150" />
       <h3>{report.name || 'Unnamed Pet'} ({report.status})</h3>
       <p><strong>Raça:</strong> {report.breed}</p>
-      <p><strong>Features:</strong> {report.features}</p>
+      <p><strong>Characterísticas:</strong> {report.features}</p>
       <p><strong>Machucados:</strong> {report.hasInjuries}</p>
-      <p><strong>:</strong> {report.lastSeenTime.toDate().toLocaleString()}</p>
-      {!isMyReport && <button onClick={handleChat}>Contact Poster</button>}
+      <p><strong>última vez visto</strong> {report.lastSeenTime.toDate().toLocaleString()}</p>
+      {!isMyReport && <button onClick={handleChat}>Contato</button>}
     </div>
   );
 }
