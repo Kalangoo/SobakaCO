@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword 
 } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
-import './Modal.css'; // Importa o CSS compartilhado dos modais
+import './Modal.css';
 
 function AuthModal({ onClose }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,28 +14,24 @@ function AuthModal({ onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Limpa erros antigos
+    setError(''); 
     console.log(`1. Tentando fazer ${isLogin ? 'login' : 'cadastro'} com o email:`, email);
 
     try {
       console.log("2. Executando a chamada para o Firebase...");
       if (isLogin) {
-        // Tentativa de Login
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         console.log("3. SUCESSO! Usuário logado:", userCredential.user.email);
       } else {
-        // Tentativa de Cadastro
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         console.log("3. SUCESSO! Usuário cadastrado:", userCredential.user.email);
       }
-      onClose(); // Fecha o modal no sucesso
+      onClose(); 
     } catch (err) {
-      // Se a chamada ao Firebase falhar, o código entra aqui
       console.error("!!! ERRO DO FIREBASE !!!");
       console.error("Código do Erro:", err.code);
       console.error("Mensagem do Erro:", err.message);
       
-      // Define uma mensagem de erro mais amigável para o usuário
       if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
           setError('Email ou senha inválidos. Tente novamente.');
       } else if (err.code === 'auth/wrong-password') {

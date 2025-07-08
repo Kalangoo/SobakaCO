@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, auth } from '../firebaseConfig';
-import './Modal.css'; // Importa o CSS compartilhado dos modais
+import './Modal.css'; 
 
 function ReportForm({ onClose }) {
   const [formData, setFormData] = useState({
@@ -67,7 +67,6 @@ function ReportForm({ onClose }) {
         ...formData,
         location,
         imageUrl,
-        // Corrigido para só adicionar a data se ela for válida
         ...(formData.lastSeenTime && { lastSeenTime: new Date(formData.lastSeenTime) }),
         createdAt: serverTimestamp(),
         reporterId: auth.currentUser.uid,

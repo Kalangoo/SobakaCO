@@ -1,11 +1,9 @@
 import React from 'react';
-import { auth } from '../firebaseConfig'; // To check if the viewer is the poster
+import { auth } from '../firebaseConfig'; 
 
 function PetDetail({ report }) {
   const handleChat = () => {
-    // This is a complex feature. For now, we'll just log it.
-    // In a full implementation, this would open a chat window component
-    // and create a chat document in Firestore between the two users for this pet.
+   
     console.log(`Starting chat with ${report.reporterEmail} about pet ${report.id}`);
     alert("Chat feature is under development! Contact at: " + report.reporterEmail);
   };

@@ -4,7 +4,7 @@ import { auth } from './firebaseConfig';
 import MapComponent from './components/MapComponent';
 import ReportForm from './components/ReportForm';
 import AuthModal from './components/AuthModal';
-import Header from './components/Header'; // 1. IMPORTE O NOVO COMPONENTE
+import Header from './components/Header'; 
 import './App.css'; 
 
 function App() {
@@ -32,7 +32,6 @@ function App() {
 
   return (
     <div className="App">
-      {/* 2. USE O NOVO HEADER E PASSE AS PROPS NECESSÁRIAS */}
       <Header
         user={user}
         onReportClick={handleReportButtonClick}
@@ -40,7 +39,6 @@ function App() {
         onLogoutClick={() => auth.signOut()}
       />
       
-      {/* 3. O HEADER ANTIGO FOI REMOVIDO DAQUI */}
       
       <main>
         <MapComponent />

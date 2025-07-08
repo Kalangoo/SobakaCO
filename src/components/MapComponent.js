@@ -17,14 +17,13 @@ function MapComponent() {
   const [reports, setReports] = useState([]);
   const [selectedReport, setSelectedReport] = useState(null);
   const [viewport, setViewport] = useState({
-    longitude: -46.6333, // Padrão: São Paulo
+    longitude: -46.6333, 
     latitude: -23.5505,
     zoom: 9,
     width: '100vw',
-    height: 'calc(100vh - 70px)' // Altura da tela menos a altura aproximada do header
+    height: 'calc(100vh - 70px)' 
   });
 
-  // --- EFEITO PARA BUSCAR DADOS DO FIREBASE ---
   useEffect(() => {
     console.log("MapComponent montado. Tentando buscar dados...");
 
@@ -44,17 +43,15 @@ function MapComponent() {
         setReports(reportsData);
       },
       (error) => {
-        // Callback de erro para o listener do onSnapshot
         console.error("%c !!! ERRO AO BUSCAR DADOS DO FIRESTORE !!!", "color: red; font-weight: bold;", error);
       }
     );
 
-    // Função de limpeza que é executada quando o componente é desmontado
     return () => {
       console.log("MapComponent desmontado. Cancelando a inscrição do listener.");
       unsubscribe();
     };
-  }, []); // Array de dependências vazio para rodar apenas uma vez na montagem
+  }, []); 
 
   const handleGeolocate = () => {
     if (navigator.geolocation) {
@@ -83,15 +80,12 @@ function MapComponent() {
           <button onClick={handleGeolocate}>Onde Estou?</button>
         </div>
 
-        {/* --- LOOP PARA RENDERIZAR OS MARCADORES --- */}
         {reports.map(report => {
-          // Log de depuração para cada marcador
           console.log(`Tentando renderizar marcador para ${report.id}. Coordenadas:`, report.location);
 
-          // Verificação de segurança para evitar que o app quebre com dados ruins
           if (!report.location || typeof report.location.lat !== 'number' || typeof report.location.lng !== 'number') {
             console.warn(`Relatório ${report.id} foi pulado por não ter coordenadas válidas.`);
-            return null; // Pula a renderização deste marcador
+            return null; 
           }
 
           return (
@@ -113,7 +107,7 @@ function MapComponent() {
           );
         })}
 
-        {/* --- POPUP QUANDO UM MARCADOR É SELECIONADO --- */}
+
         {selectedReport && (
           <Popup
             longitude={selectedReport.location.lng}
