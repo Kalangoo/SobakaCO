@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage, auth } from '../firebaseConfig';
-// Não precisamos mais do Map, Marker ou Geocoder aqui
+import './Modal.css'; // Importa o CSS compartilhado dos modais
 
 function ReportForm({ onClose }) {
   const [formData, setFormData] = useState({
@@ -14,9 +14,8 @@ function ReportForm({ onClose }) {
     lastSeenTime: '',
   });
   const [image, setImage] = useState(null);
-  // O estado 'location' agora será preenchido pelo botão
-  const [location, setLocation] = useState(null); 
-  const [locationStatus, setLocationStatus] = useState('Aguardando...'); // Para dar feedback ao usuário
+  const [location, setLocation] = useState(null);
+  const [locationStatus, setLocationStatus] = useState('Aguardando...');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,22 +28,18 @@ function ReportForm({ onClose }) {
     }
   };
 
-  // --- NOVA FUNÇÃO PARA OBTER A LOCALIZAÇÃO ---
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
       alert('Geolocalização não é suportada pelo seu navegador.');
       setLocationStatus('Não suportado');
       return;
     }
-
     setLocationStatus('Obtendo localização...');
-
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocationStatus('Localização obtida com sucesso!');
         console.log("Localização obtida:", position.coords);
         setLocation({
-          // Não precisamos do endereço aqui, apenas lat/lng
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
@@ -57,30 +52,24 @@ function ReportForm({ onClose }) {
     );
   };
 
-  // --- FUNÇÃO DE SUBMISSÃO ATUALIZADA ---
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // A verificação agora é mais simples
     if (!location || !image) {
       alert('Por favor, obtenha sua localização e envie uma imagem.');
       return;
     }
-    
-    // O resto da lógica de upload e salvamento é a mesma
     try {
-      // 1. Upload da imagem
       const imageRef = ref(storage, `petImages/${image.name + Date.now()}`);
       const snapshot = await uploadBytes(imageRef, image);
       const imageUrl = await getDownloadURL(snapshot.ref);
 
-      // 2. Adicionar o relatório ao Firestore
-      console.log("Salvando no Firestore com estes dados:", { ...formData, location, imageUrl });
       await addDoc(collection(db, 'petReports'), {
         ...formData,
-        location, // O objeto de localização obtido do navegador
+        location,
         imageUrl,
-// Se o campo lastSeenTime foi preenchido, crie a data. Senão, não adicione o campo.
-lastSeenTime: new Date(formData.lastSeenTime),
+        // Corrigido para só adicionar a data se ela for válida
+        ...(formData.lastSeenTime && { lastSeenTime: new Date(formData.lastSeenTime) }),
+        createdAt: serverTimestamp(),
         reporterId: auth.currentUser.uid,
         reporterEmail: auth.currentUser.email,
       });
@@ -88,13 +77,9 @@ lastSeenTime: new Date(formData.lastSeenTime),
       alert('Relatório enviado com sucesso!');
       onClose();
     } catch (error) {
-      // --- NOVAS LINHAS DE DEPURAÇÃO ---
-console.error("!!! ERRO CAPTURADO NO HANDLE SUBMIT !!!");
-console.error("Tipo do Erro:", error.name);
-console.error("Mensagem do Erro:", error.message);
-console.error("Código do Erro (se houver):", error.code);
-console.error("Objeto de Erro Completo:", error); // A linha mais importante!
-alert(`Falha ao enviar o relatório. Verifique o console para mais detalhes.`);
+      console.error("!!! ERRO CAPTURADO NO HANDLE SUBMIT (ReportForm) !!!");
+      console.error("Objeto de Erro Completo:", error);
+      alert(`Falha ao enviar o relatório. Verifique o console para mais detalhes.`);
     }
   };
 
@@ -102,44 +87,32 @@ alert(`Falha ao enviar o relatório. Verifique o console para mais detalhes.`);
     <div className="modal-backdrop">
       <div className="modal-content">
         <h2>Relatar um Pet</h2>
-        <form onSubmit={handleSubmit}>
-          {/* Adicione aqui os outros campos do formulário (nome, raça, etc.) */}
-          <input 
-            type="text" 
-            name="name" 
-            placeholder="Nome do animal (se souber)"
-            onChange={handleChange} 
-          />
-          {/* ...outros inputs... */}
-          <input type="file" onChange={handleImageChange} required />
-          <label htmlFor="lastSeenTime">Visto por último em:</label>
-<input
-  type="datetime-local" // Este é um tipo de input especial para data e hora
-  id="lastSeenTime"
-  name="lastSeenTime"
-  onChange={handleChange}
-  required // Torna o campo obrigatório, evitando o erro
-/>
-
-          <hr />
-
-          {/* --- NOVA SEÇÃO DE LOCALIZAÇÃO --- */}
-          <div>
-            <h4>Localização</h4>
-            <p>Clique no botão para usar sua localização atual como o local onde o animal foi visto.</p>
-            <button type="button" onClick={handleGetLocation}>
-              Usar minha localização atual
-            </button>
-            <p><strong>Status:</strong> {locationStatus}</p>
-            {location && (
-                <p style={{color: 'green'}}>✓ Coordenadas salvas!</p>
-            )}
-          </div>
-
-          <hr />
+        <form onSubmit={handleSubmit} className="modal-form">
+          <input type="text" name="name" onChange={handleChange} value={formData.name} placeholder="Nome do animal (opcional)" />
+          <input type="text" name="breed" onChange={handleChange} value={formData.breed} placeholder="Raça (opcional)" />
+          <input type="text" name="features" onChange={handleChange} value={formData.features} placeholder="Características marcantes" required/>
           
-          <button type="submit">Enviar Relatório</button>
-          <button type="button" onClick={onClose}>Fechar</button>
+          <select name="hasInjuries" onChange={handleChange} value={formData.hasInjuries}>
+            <option value="No">Não parece ter ferimentos</option>
+            <option value="Yes">Sim, parece estar ferido</option>
+            <option value="Unknown">Não sei</option>
+          </select>
+
+          <label htmlFor="lastSeenTime">Visto por último em:</label>
+          <input type="datetime-local" id="lastSeenTime" name="lastSeenTime" onChange={handleChange} value={formData.lastSeenTime} />
+          
+          <input type="file" onChange={handleImageChange} required />
+          
+          <div style={{ textAlign: 'center', border: '1px solid #ddd', padding: '10px', borderRadius: '8px' }}>
+            <h4>Localização</h4>
+            <button type="button" onClick={handleGetLocation}>Usar minha localização atual</button>
+            <p><strong>Status:</strong> {locationStatus}</p>
+          </div>
+          
+          <div className="modal-actions">
+            <button type="button" onClick={onClose} className="close-button">Fechar</button>
+            <button type="submit" className="submit-button">Enviar Relatório</button>
+          </div>
         </form>
       </div>
     </div>

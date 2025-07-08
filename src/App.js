@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-// The LoadScript component is no longer needed
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import MapComponent from './components/MapComponent';
 import ReportForm from './components/ReportForm';
 import AuthModal from './components/AuthModal';
-import './App.css';
-
-// We no longer need the 'libraries' constant
+import Header from './components/Header'; // 1. IMPORTE O NOVO COMPONENTE
+import './App.css'; 
 
 function App() {
   const [user, setUser] = useState(null);
@@ -18,10 +16,10 @@ function App() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
-        setShowAuthModal(false);
+        setShowAuthModal(false); 
       }
     });
-    return () => unsubscribe();
+    return () => unsubscribe(); 
   }, []);
 
   const handleReportButtonClick = () => {
@@ -32,23 +30,17 @@ function App() {
     }
   };
 
-  // The return statement is now simpler, without the LoadScript wrapper
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Sobaka</h1>
-        <div>
-          {user ? (
-            <>
-              <span>Bem vindo, {user.email}</span>
-              <button onClick={() => auth.signOut()}>Logout</button>
-            </>
-          ) : (
-            <button onClick={() => setShowAuthModal(true)}>Login / Registre-se</button>
-          )}
-          <button onClick={handleReportButtonClick}>Reportar Pet</button>
-        </div>
-      </header>
+      {/* 2. USE O NOVO HEADER E PASSE AS PROPS NECESSÁRIAS */}
+      <Header
+        user={user}
+        onReportClick={handleReportButtonClick}
+        onLoginClick={() => setShowAuthModal(true)}
+        onLogoutClick={() => auth.signOut()}
+      />
+      
+      {/* 3. O HEADER ANTIGO FOI REMOVIDO DAQUI */}
       
       <main>
         <MapComponent />

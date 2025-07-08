@@ -1,0 +1,82 @@
+/* Container principal do header */
+.header-container {
+    display: flex;
+    justify-content: space-between; /* Itens nas extremidades: logo à esquerda, nav à direita */
+    align-items: center; /* Alinha verticalmente no centro */
+    padding: 10px 40px; /* 10px de padding em cima/baixo, 40px nas laterais */
+    background-color: #2c3e50; /* Um azul escuro, bem moderno */
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra sutil para dar profundidade */
+  
+    /* Faz o header ficar fixo no topo da página ao rolar */
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  /* Estilização da área do logo */
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espaço entre a patinha e o texto */
+  }
+  
+  .header-logo h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  
+  .logo-svg {
+    width: 40px;
+    height: 40px;
+    /* Cor da patinha, pode ser qualquer cor */
+    fill: #f39c12; /* Um laranja/amarelo para contraste */
+  }
+  
+  /* Estilização da área de navegação (botões) */
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Espaço entre os itens da navegação */
+  }
+  
+  .welcome-message {
+    font-size: 0.9rem;
+    margin-right: 10px;
+    opacity: 0.8; /* Um pouco transparente para não chamar tanta atenção */
+  }
+  
+  /* Estilo padrão para todos os botões no header */
+  .header-nav button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    background-color: #34495e; /* Cor de fundo um pouco mais clara que o header */
+    color: white;
+  }
+  
+  /* Efeito ao passar o mouse sobre os botões */
+  .header-nav button:hover {
+    background-color: #4e6a85;
+  }
+  
+  .header-nav button:active {
+      transform: scale(0.98); /* Efeito de clique */
+  }
+  
+  
+  /* Estilo especial para o botão de "Relatar um Pet" para destacá-lo */
+  .header-nav .report-button {
+    background-color: #f39c12; /* Cor de destaque (laranja) */
+    color: #2c3e50; /* Texto escuro para melhor leitura */
+  }
+  
+  .header-nav .report-button:hover {
+    background-color: #f5b041; /* Laranja um pouco mais claro no hover */
+  }
